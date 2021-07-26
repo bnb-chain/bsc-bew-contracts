@@ -1,0 +1,43 @@
+{
+  "name": "bsc-bew-contracts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "testrpc": "ganache-cli --gasLimit 13000000 -e 100000 --networkId 666",
+    "truffle": "truffle",
+    "truffle:test": "truffle test",
+    "truffle:encode": "truffle test ./test/TestEncodeProxyConstructor.js",
+    "truffle:compile": "truffle compile",
+    "truffle:migrate": "truffle migrate",
+    "coverage": "truffle run coverage --network development",
+    "lint": "npm run lint:sol && npm run lint:js",
+    "lint:js": "eslint test/**/*.js",
+    "lint:sol:fix": "solium -d contracts/ --fix",
+    "lint:sol": "solium -d contracts/",
+    "flatten": "truffle-flattener contracts/BewSwapImplement.sol | grep -v 'SPDX-License-Identifier' > contracts/flattened/BewSwapImplement.sol && truffle-flattener contracts/BewSwapUpgradeableProxy.sol | grep -v 'SPDX-License-Identifier' > contracts/flattened/BewSwapUpgradeableProxy.sol",
+    "generate": "node generate-bew-swap.js",
+    "generate-test": "node generate-bew-swap.js --mock true"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "await-sleep": "0.0.1",
+    "commander": "^3.0.1",
+    "elliptic": ">=6.5.3",
+    "ethereum-input-data-decoder": "0.3.0",
+    "lodash": ">=4.17.19",
+    "mem": ">=4.0.0",
+    "minimist": ">=1.2.3",
+    "nunjucks": "^3.2.0",
+    "openzeppelin-solidity": "v4.2.0",
+    "rlp": "2.2.5",
+    "solidity-bytes-utils": "0.0.8",
+    "solidity-coverage": "0.7.11",
+    "solium": "^1.2.5",
+    "truffle-assertions": "0.9.2",
+    "truffle-flattener": "git+https://github.com/jplew/truffle-flattener.git",
+    "web3": "1.2.6",
+    "web3-eth-abi": "1.3.0"
+  }
+}
