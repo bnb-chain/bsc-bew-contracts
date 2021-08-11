@@ -8,6 +8,8 @@ import "openzeppelin-solidity/contracts/proxy/utils/Initializable.sol";
 import "openzeppelin-solidity/contracts/utils/Address.sol";
 import "openzeppelin-solidity/contracts/proxy/utils/Initializable.sol";
 
+
+// shall we have another name?
 contract BewSwap is Context, Initializable {
 
     using SafeERC20 for IERC20;
@@ -124,6 +126,7 @@ contract BewSwap is Context, Initializable {
 
         // return remain from tokens
         uint256 fromTokenBalance = fromToken.balanceOf(address(this));
+        // if balance is zero, no need to do the transfer.
         fromToken.safeTransfer(to, fromTokenBalance);
     }
 
@@ -169,6 +172,7 @@ contract BewSwap is Context, Initializable {
 
         // return remain from tokens
         uint256 fromTokenBalance = fromToken.balanceOf(address(this));
+        // if balance is zero, no need to do the transfer.
         fromToken.safeTransfer(to, fromTokenBalance);
     }
 
