@@ -34,6 +34,10 @@ contract BewSwap is Context, ReentrancyGuard, Initializable {
 
 
     function initialize(address owner, address payable feeAccount, uint256 feePct) external initializer {
+        require(feePct <= feePctScale, "BewSwap: fee pct is larger than fee pct scale");
+        require(owner != address(0), "BewSwap: owner is the zero address");
+        require(feeAccount != address(0), "BewSwap: fee account is the zero address");
+
         _owner = owner;
         _feePct = feePct;
         _feeAccount = feeAccount;
@@ -57,6 +61,7 @@ contract BewSwap is Context, ReentrancyGuard, Initializable {
 
     function transferOwnership(address newOwner) external onlyOwner {
         require(newOwner != address(0), "BewSwap: new owner is the zero address");
+
         emit OwnershipTransferred(_owner, newOwner);
         _pendingOwner = newOwner;
     }
@@ -74,7 +79,7 @@ contract BewSwap is Context, ReentrancyGuard, Initializable {
 
     function updateFeePct(uint256 newFeePct) external onlyOwner {
         require(newFeePct != _feePct, "BewSwap: new fee pct is the same as the current fee pct");
-        require(newFeePct <= feePctScale, "BewSwap: new fee pct should is larger than fee pct scale");
+        require(newFeePct <= feePctScale, "BewSwap: new fee pct should larger than fee pct scale");
         emit FeePctUpdated(_feePct, newFeePct);
         _feePct = newFeePct;
     }
@@ -85,6 +90,8 @@ contract BewSwap is Context, ReentrancyGuard, Initializable {
 
     function updateFeeAccount(address payable newFeeAccount) external onlyOwner {
         require(newFeeAccount != address(0), "BewSwap: new fee account is the zero address");
+        require(newFeeAccount != _feeAccount, "BewSwap: new fee account is the same as current fee account");
+
         emit FeeAccountUpdated(_feeAccount, newFeeAccount);
         _feeAccount = newFeeAccount;
     }
