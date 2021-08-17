@@ -5,7 +5,6 @@
   "main": "index.js",
   "scripts": {
     "testrpc": "ganache-cli --fork https://data-seed-prebsc-1-s1.binance.org:8545 --unlock 0x042ccc750E1099068622Bb521003F207297a40b0 --gasLimit 13000000 -e 100000 --networkId 97",
-    "testrpc1": "ganache-cli --gasLimit 13000000 -e 100000 --networkId 97",
     "truffle": "truffle",
     "truffle:test": "truffle test",
     "truffle:encode": "node ./test/TestEncodeProxyConstructor.js",
@@ -25,7 +24,7 @@
     "await-sleep": "0.0.1",
     "commander": "^3.0.1",
     "elliptic": "^6.5.4",
-    "ethereum-input-data-decoder": "0.3.0",
+    "ethereum-input-data-decoder": "0.3.w0",
     "lodash": "^4.17.21",
     "mem": "^9.0.1",
     "minimist": ">=1.2.3",

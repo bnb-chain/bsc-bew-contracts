@@ -6,13 +6,14 @@ import "openzeppelin-solidity/contracts/token/ERC20/utils/SafeERC20.sol";
 import "openzeppelin-solidity/contracts/utils/Context.sol";
 import "openzeppelin-solidity/contracts/utils/Address.sol";
 import "openzeppelin-solidity/contracts/security/ReentrancyGuard.sol";
-import "openzeppelin-solidity/contracts/proxy/utils/Initializable.sol";
 
-contract BewSwap is Context, ReentrancyGuard, Initializable {
+
+contract BewSwap is Context, ReentrancyGuard {
 
     using SafeERC20 for IERC20;
 
     uint256 public constant feePctScale = 1e6;
+    uint256 public safeMinGas;
 
     uint256 private _feePct;
 
@@ -28,12 +29,7 @@ contract BewSwap is Context, ReentrancyGuard, Initializable {
     event FeeReceived(address indexed token, uint256 indexed amount);
 
 
-    constructor() public {
-    }
-
-
-
-    function initialize(address owner, address payable feeAccount, uint256 feePct) external initializer {
+    constructor(address owner, address payable feeAccount, uint256 feePct) public {
         require(feePct <= feePctScale, "BewSwap: fee pct is larger than fee pct scale");
         require(owner != address(0), "BewSwap: owner is the zero address");
         require(feeAccount != address(0), "BewSwap: fee account is the zero address");
@@ -41,11 +37,23 @@ contract BewSwap is Context, ReentrancyGuard, Initializable {
         _owner = owner;
         _feePct = feePct;
         _feeAccount = feeAccount;
+        safeMinGas = 2300;
 
         emit OwnershipTransferred(address(0), owner);
         emit FeePctUpdated(0, feePct);
         emit FeeAccountUpdated(address(0), feeAccount);
     }
+    event Swap(
+        address indexed sender,
+        uint amount0In,
+        uint amount1In,
+        uint amount0Out,
+        uint amount1Out,
+        address indexed to
+    );
+
+
+
 
 
     fallback() external payable {}
@@ -86,6 +94,11 @@ contract BewSwap is Context, ReentrancyGuard, Initializable {
 
     function feeAccount() external view returns (address) {
         return _feeAccount;
+    }
+
+    function updateSafeMinGas(uint256 _safeMinGas) external onlyOwner {
+        require(2300 <= _safeMinGas, "BewSwap: 2300 <= _safeMinGas");
+        safeMinGas = _safeMinGas;
     }
 
     function updateFeeAccount(address payable newFeeAccount) external onlyOwner {
@@ -275,7 +288,7 @@ contract BewSwap is Context, ReentrancyGuard, Initializable {
     }
 
     function _safeTransferETH(address to, uint256 value) internal {
-        (bool success, ) = to.call{value: value}("");
+        (bool success, ) = to.call{gas: safeMinGas, value: value}("");
         require(success, "BewSwap: transfer eth failed");
     }
 }

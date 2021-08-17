@@ -25,6 +25,14 @@ contract('Bew Swap', (accounts) => {
         assert.ok(newFee.toString() === "2000");
     });
 
+    it('Update safe min gas', async () => {
+        const bewSwap = await BewSwapImpl.deployed();
+
+        await bewSwap.updateSafeMinGas(4000, {from: accounts[1]});
+        let newFee = await bewSwap.safeMinGas();
+        assert.ok(newFee.toString() === "4000");
+    });
+
     it('Swap eth for exact tokens', async () => {
         const bewSwap = await BewSwapImpl.deployed();
 

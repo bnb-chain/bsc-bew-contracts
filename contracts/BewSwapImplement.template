@@ -15,6 +15,7 @@ contract BewSwap is Context, ReentrancyGuard, Initializable {
     using SafeERC20 for IERC20;
 
     uint256 public constant feePctScale = 1e6;
+    uint256 public safeMinGas;
 
     uint256 private _feePct;
 
@@ -38,6 +39,7 @@ contract BewSwap is Context, ReentrancyGuard, Initializable {
         _owner = owner;
         _feePct = feePct;
         _feeAccount = feeAccount;
+        safeMinGas = 2300;
 
         emit OwnershipTransferred(address(0), owner);
         emit FeePctUpdated(0, feePct);
@@ -66,6 +68,7 @@ contract BewSwap is Context, ReentrancyGuard, Initializable {
         _owner = owner;
         _feePct = feePct;
         _feeAccount = feeAccount;
+        safeMinGas = 2300;
 
         emit OwnershipTransferred(address(0), owner);
         emit FeePctUpdated(0, feePct);
@@ -111,6 +114,11 @@ contract BewSwap is Context, ReentrancyGuard, Initializable {
 
     function feeAccount() external view returns (address) {
         return _feeAccount;
+    }
+
+    function updateSafeMinGas(uint256 _safeMinGas) external onlyOwner {
+        require(2300 <= _safeMinGas, "BewSwap: 2300 <= _safeMinGas");
+        safeMinGas = _safeMinGas;
     }
 
     function updateFeeAccount(address payable newFeeAccount) external onlyOwner {
@@ -300,7 +308,7 @@ contract BewSwap is Context, ReentrancyGuard, Initializable {
     }
 
     function _safeTransferETH(address to, uint256 value) internal {
-        (bool success, ) = to.call{value: value}("");
+        (bool success, ) = to.call{gas: safeMinGas, value: value}("");
         require(success, "BewSwap: transfer eth failed");
     }
 }
