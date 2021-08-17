@@ -10,6 +10,8 @@ contract('Bew Swap', (accounts) => {
         const bewSwap = await BewSwapImpl.deployed();
 
         await bewSwap.transferOwnership(accounts[1], {from: accounts[0]});
+        await bewSwap.acceptOwnership({from: accounts[1]});
+
         let newOwner = await bewSwap.owner();
 
         assert.ok(newOwner === accounts[1]);
@@ -60,15 +62,13 @@ contract('Bew Swap', (accounts) => {
         const swapToken = new web3.eth.Contract(erc20ABI, "0xdf1546436D9EBfF2F5B09bfC4Fa7Ad5822e52177");
         await swapToken.methods.approve(bewSwap.address, "100000000000000000000000000").send({from: "0x042ccc750E1099068622Bb521003F207297a40b0"});
 
-        let swapTx = await bewSwap.swapTokensForExactTokens("0xc80251cD06db2383746Ebd85fff5B3c94E5FEfd7", "10000", "1000", ["0xdf1546436D9EBfF2F5B09bfC4Fa7Ad5822e52177", "0xa2C3290cC286688e83Cd37e04553b51Bc8b35d89"], "0x042ccc750E1099068622Bb521003F207297a40b0", 2628767400, {from: "0x042ccc750E1099068622Bb521003F207297a40b0"});
+        let swapTx = await bewSwap.swapTokensForExactTokens("0xc80251cD06db2383746Ebd85fff5B3c94E5FEfd7", "1000", "1000", ["0xdf1546436D9EBfF2F5B09bfC4Fa7Ad5822e52177", "0xa2C3290cC286688e83Cd37e04553b51Bc8b35d89"], "0x042ccc750E1099068622Bb521003F207297a40b0", 2628767400, {from: "0x042ccc750E1099068622Bb521003F207297a40b0"});
 
         truffleAssert.eventEmitted(swapTx, "Swap",(ev) => {
-            console.log("event", ev)
             return ev.amount0Out.toString() === "1000";
         });
 
         truffleAssert.eventEmitted(swapTx, "FeeReceived",(ev) => {
-            console.log("event", ev)
             return ev.amount.toString() != "0";
         });
     });
@@ -103,12 +103,10 @@ contract('Bew Swap', (accounts) => {
         let swapTx = await bewSwap.swapExactTokensForETH("0xc80251cD06db2383746Ebd85fff5B3c94E5FEfd7", "100000", "1", ["0xa2C3290cC286688e83Cd37e04553b51Bc8b35d89", "0xbf49bf2b192330e40339ccbb143592629074c22f"], "0x042ccc750E1099068622Bb521003F207297a40b0", 2628767400, {from: "0x042ccc750E1099068622Bb521003F207297a40b0"});
 
         truffleAssert.eventEmitted(swapTx, "Swap",(ev) => {
-            console.log("event", ev)
             return ev.amount0In.toString() === "100000";
         });
 
         truffleAssert.eventEmitted(swapTx, "FeeReceived",(ev) => {
-            console.log("event", ev)
             return ev.amount.toString() != "0";
         });
     });
@@ -124,12 +122,10 @@ contract('Bew Swap', (accounts) => {
         let swapTx = await bewSwap.swapTokensForExactETH("0xc80251cD06db2383746Ebd85fff5B3c94E5FEfd7", "1000", "1000000", ["0xa2C3290cC286688e83Cd37e04553b51Bc8b35d89", "0xbf49bf2b192330e40339ccbb143592629074c22f"], "0x042ccc750E1099068622Bb521003F207297a40b0", 2628767400, {from: "0x042ccc750E1099068622Bb521003F207297a40b0"});
 
         truffleAssert.eventEmitted(swapTx, "Swap",(ev) => {
-            console.log("event", ev)
             return ev.amount1Out.toString() === "1000";
         });
 
         truffleAssert.eventEmitted(swapTx, "FeeReceived",(ev) => {
-            console.log("event", ev)
             return ev.amount.toString() != "0";
         });
     });
