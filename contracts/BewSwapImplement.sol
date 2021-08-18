@@ -6,9 +6,9 @@ import "openzeppelin-solidity/contracts/token/ERC20/utils/SafeERC20.sol";
 import "openzeppelin-solidity/contracts/utils/Context.sol";
 import "openzeppelin-solidity/contracts/utils/Address.sol";
 import "openzeppelin-solidity/contracts/security/ReentrancyGuard.sol";
+import "openzeppelin-solidity/contracts/proxy/utils/Initializable.sol";
 
-
-contract BewSwap is Context, ReentrancyGuard {
+contract BewSwap is Context, ReentrancyGuard, Initializable {
 
     using SafeERC20 for IERC20;
 
@@ -29,7 +29,12 @@ contract BewSwap is Context, ReentrancyGuard {
     event FeeReceived(address indexed token, uint256 indexed amount);
 
 
-    constructor(address owner, address payable feeAccount, uint256 feePct) public {
+    constructor() public {
+    }
+
+
+
+    function initialize(address owner, address payable feeAccount, uint256 feePct) external initializer {
         require(feePct <= feePctScale, "BewSwap: fee pct is larger than fee pct scale");
         require(owner != address(0), "BewSwap: owner is the zero address");
         require(feeAccount != address(0), "BewSwap: fee account is the zero address");
@@ -43,17 +48,6 @@ contract BewSwap is Context, ReentrancyGuard {
         emit FeePctUpdated(0, feePct);
         emit FeeAccountUpdated(address(0), feeAccount);
     }
-    event Swap(
-        address indexed sender,
-        uint amount0In,
-        uint amount1In,
-        uint amount0Out,
-        uint amount1Out,
-        address indexed to
-    );
-
-
-
 
 
     fallback() external payable {}
@@ -116,7 +110,7 @@ contract BewSwap is Context, ReentrancyGuard {
         address[] calldata path,
         address to,
         uint deadline
-    ) external {
+    ) external nonReentrant {
         IERC20 fromToken = IERC20(path[0]);
         fromToken.safeTransferFrom(msg.sender, address(this), amountIn);
         fromToken.safeIncreaseAllowance(address(router), amountIn);
@@ -144,7 +138,7 @@ contract BewSwap is Context, ReentrancyGuard {
         address[] calldata path,
         address to,
         uint deadline
-    ) external {
+    ) external nonReentrant {
         IERC20 fromToken = IERC20(path[0]);
         fromToken.safeTransferFrom(msg.sender, address(this), amountInMax);
         fromToken.safeIncreaseAllowance(address(router), amountInMax);

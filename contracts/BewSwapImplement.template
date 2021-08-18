@@ -136,7 +136,7 @@ contract BewSwap is Context, ReentrancyGuard, Initializable {
         address[] calldata path,
         address to,
         uint deadline
-    ) external {
+    ) external nonReentrant {
         IERC20 fromToken = IERC20(path[0]);
         fromToken.safeTransferFrom(msg.sender, address(this), amountIn);
         fromToken.safeIncreaseAllowance(address(router), amountIn);
@@ -164,7 +164,7 @@ contract BewSwap is Context, ReentrancyGuard, Initializable {
         address[] calldata path,
         address to,
         uint deadline
-    ) external {
+    ) external nonReentrant {
         IERC20 fromToken = IERC20(path[0]);
         fromToken.safeTransferFrom(msg.sender, address(this), amountInMax);
         fromToken.safeIncreaseAllowance(address(router), amountInMax);
