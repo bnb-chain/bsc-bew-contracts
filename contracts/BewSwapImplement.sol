@@ -143,7 +143,7 @@ contract BewSwap is Context, ReentrancyGuard, Initializable {
         fromToken.safeTransferFrom(msg.sender, address(this), amountInMax);
         fromToken.safeIncreaseAllowance(address(router), amountInMax);
 
-        router.swapTokensForExactTokens(amountInMax, amountOut, path, address(this), deadline);
+        router.swapTokensForExactTokens(amountOut, amountInMax , path, address(this), deadline);
 
         IERC20 toToken = IERC20(path[path.length-1]);
         uint256 toTokenBalance = toToken.balanceOf(address(this));
