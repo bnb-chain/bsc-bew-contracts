@@ -22,8 +22,6 @@ contract BewSwap is ContextUpgradeable, ReentrancyGuardUpgradeable, Initializabl
 
     address payable private _feeAccount;
 
-    uint256[50] private __gap;
-
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
     event OwnershipAccepted(address indexed previousOwner, address indexed newOwner);
     event FeePctUpdated(uint256 indexed previousFeePct, uint256 indexed newFeePct);
@@ -297,4 +295,6 @@ contract BewSwap is ContextUpgradeable, ReentrancyGuardUpgradeable, Initializabl
         (bool success, ) = to.call{gas: safeMinGas, value: value}("");
         require(success, "BewSwap: transfer eth failed");
     }
+
+    uint256[50] private __gap;
 }
