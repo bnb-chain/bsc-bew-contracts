@@ -1,16 +1,16 @@
 pragma solidity ^0.8.0;
 
 import "./interfaces/IUniRouter.sol";
-import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
-import "openzeppelin-solidity/contracts/token/ERC20/utils/SafeERC20.sol";
-import "openzeppelin-solidity/contracts/utils/Context.sol";
-import "openzeppelin-solidity/contracts/utils/Address.sol";
-import "openzeppelin-solidity/contracts/security/ReentrancyGuard.sol";
-import "openzeppelin-solidity/contracts/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-contract BewSwap is Context, ReentrancyGuard, Initializable {
+contract BewSwap is ContextUpgradeable, ReentrancyGuardUpgradeable, Initializable {
 
-    using SafeERC20 for IERC20;
+    using SafeERC20Upgradeable for IERC20Upgradeable;
 
     uint256 public constant feePctScale = 1e6;
     uint256 public safeMinGas;
@@ -111,12 +111,12 @@ contract BewSwap is Context, ReentrancyGuard, Initializable {
         address to,
         uint deadline
     ) external nonReentrant {
-        IERC20 fromToken = IERC20(path[0]);
+        IERC20Upgradeable fromToken = IERC20Upgradeable(path[0]);
         fromToken.safeTransferFrom(msg.sender, address(this), amountIn);
         fromToken.safeIncreaseAllowance(address(router), amountIn);
         router.swapExactTokensForTokensSupportingFeeOnTransferTokens(amountIn, amountOutMin, path, address(this), deadline);
 
-        IERC20 toToken = IERC20(path[path.length-1]);
+        IERC20Upgradeable toToken = IERC20Upgradeable(path[path.length-1]);
         uint256 toTokenBalance = toToken.balanceOf(address(this));
         require(toTokenBalance >= amountOutMin, "BewSwap: get less to tokens than expected");
 
@@ -139,13 +139,13 @@ contract BewSwap is Context, ReentrancyGuard, Initializable {
         address to,
         uint deadline
     ) external nonReentrant {
-        IERC20 fromToken = IERC20(path[0]);
+        IERC20Upgradeable fromToken = IERC20Upgradeable(path[0]);
         fromToken.safeTransferFrom(msg.sender, address(this), amountInMax);
         fromToken.safeIncreaseAllowance(address(router), amountInMax);
 
         router.swapTokensForExactTokens(amountOut, amountInMax , path, address(this), deadline);
 
-        IERC20 toToken = IERC20(path[path.length-1]);
+        IERC20Upgradeable toToken = IERC20Upgradeable(path[path.length-1]);
         uint256 toTokenBalance = toToken.balanceOf(address(this));
         require(toTokenBalance >= amountOut, "BewSwap: get less to tokens than expected");
 
@@ -175,7 +175,7 @@ contract BewSwap is Context, ReentrancyGuard, Initializable {
     ) external payable nonReentrant {
         router.swapExactETHForTokensSupportingFeeOnTransferTokens{value: msg.value}(amountOutMin, path, address(this), deadline);
 
-        IERC20 toToken = IERC20(path[path.length-1]);
+        IERC20Upgradeable toToken = IERC20Upgradeable(path[path.length-1]);
         uint256 toTokenBalance = toToken.balanceOf(address(this));
         require(toTokenBalance >= amountOutMin, "BewSwap: get less to tokens than expected");
 
@@ -197,7 +197,7 @@ contract BewSwap is Context, ReentrancyGuard, Initializable {
         address[] calldata path,
         address payable to, uint deadline
     ) external nonReentrant {
-        IERC20 fromToken = IERC20(path[0]);
+        IERC20Upgradeable fromToken = IERC20Upgradeable(path[0]);
         fromToken.safeTransferFrom(msg.sender, address(this), amountInMax);
         fromToken.safeIncreaseAllowance(address(router), amountInMax);
 
@@ -231,7 +231,7 @@ contract BewSwap is Context, ReentrancyGuard, Initializable {
         address payable to,
         uint deadline
     ) external nonReentrant {
-        IERC20 fromToken = IERC20(path[0]);
+        IERC20Upgradeable fromToken = IERC20Upgradeable(path[0]);
         fromToken.safeTransferFrom(msg.sender, address(this), amountIn);
         fromToken.safeIncreaseAllowance(address(router), amountIn);
 
@@ -260,7 +260,7 @@ contract BewSwap is Context, ReentrancyGuard, Initializable {
     ) external payable nonReentrant {
         router.swapETHForExactTokens{value: msg.value}(amountOut, path, address(this), deadline);
 
-        IERC20 toToken = IERC20(path[path.length-1]);
+        IERC20Upgradeable toToken = IERC20Upgradeable(path[path.length-1]);
         uint256 toTokenBalance = toToken.balanceOf(address(this));
         require(toTokenBalance >= amountOut, "BewSwap: get less to tokens than expected");
 
