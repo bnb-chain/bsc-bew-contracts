@@ -22,6 +22,8 @@ contract BewSwap is ContextUpgradeable, ReentrancyGuardUpgradeable, Initializabl
 
     address payable private _feeAccount;
 
+    uint256[50] private __gap;
+
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
     event OwnershipAccepted(address indexed previousOwner, address indexed newOwner);
     event FeePctUpdated(uint256 indexed previousFeePct, uint256 indexed newFeePct);
@@ -33,6 +35,31 @@ contract BewSwap is ContextUpgradeable, ReentrancyGuardUpgradeable, Initializabl
     }
 
 
+
+    function initialize(address owner, address payable feeAccount, uint256 feePct) external {
+        __BewSwap_init(owner, feeAccount, feePct);
+    }
+
+    function __BewSwap_init(address owner, address payable feeAccount, uint256 feePct) internal initializer {
+        __Context_init_unchained();
+        __ReentrancyGuard_init_unchained();
+        __BewSwap_init_unchained(owner, feeAccount, feePct);
+    }
+
+    function __BewSwap_init_unchained(address owner, address payable feeAccount, uint256 feePct) internal initializer {
+        require(feePct <= feePctScale, "BewSwap: fee pct is larger than fee pct scale");
+        require(owner != address(0), "BewSwap: owner is the zero address");
+        require(feeAccount != address(0), "BewSwap: fee account is the zero address");
+
+        _owner = owner;
+        _feePct = feePct;
+        _feeAccount = feeAccount;
+        safeMinGas = 2300;
+
+        emit OwnershipTransferred(address(0), owner);
+        emit FeePctUpdated(0, feePct);
+        emit FeeAccountUpdated(address(0), feeAccount);
+    }
 
     function initialize(address owner, address payable feeAccount, uint256 feePct) external initializer {
         require(feePct <= feePctScale, "BewSwap: fee pct is larger than fee pct scale");
