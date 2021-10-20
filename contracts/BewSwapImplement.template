@@ -10,7 +10,7 @@ import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.
 {% if mock %}
 contract BewSwap is ContextUpgradeable, ReentrancyGuardUpgradeable {
 {% else %}
-contract BewSwap is ContextUpgradeable, ReentrancyGuardUpgradeable, Initializable {
+contract BewSwap is Initializable, ContextUpgradeable, ReentrancyGuardUpgradeable {
 {% endif %}
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
